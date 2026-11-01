@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Afinidad política · Elecciones generales 29-N</title>
+<style>
+:root{--bg:#faf8f4;--fg:#1d1b18;--mut:#6b665d;--card:#fff;--bd:#e2ddd3;--ac:#b3261e;--ok:#2d6a4f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--fg:#f1ede4;--mut:#a39d8f;--card:#221f17;--bd:#3a362b;--ac:#ff8a80;--ok:#7bd1a3;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17150f;--fg:#f1ede4;--mut:#a39d8f;--card:#221f17;--bd:#3a362b;--ac:#ff8a80;--ok:#7bd1a3;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 Georgia,"Times New Roman",serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;line-height:1.3;margin:0 0 16px}
+.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:14px 0}
+button,select{font:inherit;color:inherit}
+select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--card)}
+.btn{display:block;width:100%;padding:12px;margin:6px 0;border:1px solid var(--bd);border-radius:10px;background:var(--card);cursor:pointer;text-align:left}
+.btn.sel{border-color:var(--ac);outline:2px solid var(--ac)}
+.pri{background:var(--ac);color:#fff;border-color:var(--ac);text-align:center;font-weight:bold}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.bar{height:10px;border-radius:5px;background:var(--bd);overflow:hidden}.bar i{display:block;height:100%}
+.prog{height:6px;background:var(--bd);border-radius:3px;margin-bottom:16px}.prog i{display:block;height:100%;background:var(--ac);border-radius:3px}
+.warn{border-left:4px solid var(--ac);padding-left:12px}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:6px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}
+a{color:var(--ac)}label{display:flex;gap:8px;align-items:center;margin:8px 0}
+</style></head><body><main id="app"></main>
+<script>
+const P=[["PP","Partido Popular","#1d84ce"],["PSOE","PSOE","#e30613"],["Vox","Vox","#63be21"],["FA","Frente Amplio (IU, Sumar, Más Madrid, Comuns…)","#c2185b"],["Podemos","Podemos","#7b3fa0"],["ERC","ERC","#e8a600"],["Junts","Junts","#00c3b2"],["Bildu","EH Bildu","#8bb800"],["PNV","PNV","#2e8b57"],["BNG","BNG","#6fb7e9"],["CCa","Coalición Canaria","#f4c20d"],["Compromís","Compromís–Front Valencià","#e8742a"]];
+const REG={CAT:"Cataluña",PV:"País Vasco",NAV:"Navarra",GAL:"Galicia",VAL:"Comunitat Valenciana",CAN:"Canarias",BAL:"Illes Balears",RES:"Resto de España"};
+const PR={ERC:["CAT"],Junts:["CAT"],Bildu:["PV","NAV"],PNV:["PV"],BNG:["GAL"],CCa:["CAN"],Compromís:["VAL"]};
+const NOTE={CAT:"En Cataluña, ERC y Podemos colaboran electoralmente y Comuns va dentro del Frente Amplio.",VAL:"En la Comunitat Valenciana, Compromís, Podemos y EUPV concurren juntos (Compromís–Front Valencià); el Frente Amplio no tiene lista propia.",CAN:"En Canarias, Frente Amplio y Podemos concurren juntos (Unidad del Pueblo Canario) y no hay lista propia de cada uno; aquí se muestran por separado solo como referencia.",BAL:"En Baleares el Frente Amplio va en Ara MÉS–Front Ampli, que esta herramienta no modela por separado."};
+const N=null;
+const Q=[
+["Hay que bajar el IRPF y otros impuestos generales, aunque se reduzcan los ingresos públicos.",[2,-1,2,-2,-2,-1,1,-2,0,-2,1,-2]],
+["Debe existir un impuesto estatal permanente a las grandes fortunas.",[-2,1,-2,2,2,1,-1,2,0,2,-1,2]],
+["La jornada laboral máxima debe reducirse por ley a 37,5 horas semanales.",[-1,1,-2,2,2,1,-1,2,0,2,-1,2]],
+["El Estado debe poder limitar los precios del alquiler en zonas tensionadas.",[-2,1,-2,2,2,1,-1,2,0,2,-1,2]],
+["Para abaratar la vivienda, lo principal es liberalizar suelo y facilitar construir más.",[2,0,2,-1,-2,-1,1,-1,0,-1,1,-1]],
+["Las pensiones deben seguir siendo solo de reparto público, sin ir hacia un modelo mixto con capitalización.",[0,2,-2,2,2,1,-1,2,0,2,0,2]],
+["Hay que endurecer el control de la inmigración y expulsar con más rapidez a quienes están en situación irregular.",[1,-1,2,-2,-2,-2,1,-2,-1,-2,0,-2]],
+["Debe aprobarse una regularización extraordinaria de personas migrantes que ya viven en España.",[-2,1,-2,2,2,2,-2,2,1,2,1,2]],
+["Los conflictos territoriales deben resolverse mediante negociación política, incluida la amnistía.",[-2,1,-2,2,2,2,2,2,1,2,0,1]],
+["Cataluña debería poder celebrar un referéndum de autodeterminación pactado con el Estado.",[-2,-2,-2,0,2,2,2,2,1,1,-1,0]],
+["Conviene devolver competencias al Estado (sanidad, educación…) y reducir el peso de las comunidades autónomas.",[0,-1,2,-2,-2,-2,-2,-2,-2,-2,-2,-2]],
+["Conocer una lengua cooficial no debe ser requisito para acceder a un empleo público.",[1,-1,2,-2,-2,-2,-2,-2,-2,-2,-1,-2]],
+["Hay que alargar la vida de las centrales nucleares.",[2,-1,2,-2,-2,-1,1,-2,1,-2,0,-2]],
+["Se debe acelerar la transición a renovables y la política climática aunque cueste más a corto plazo.",[-1,2,-2,2,2,2,0,2,1,0,0,2]],
+["España debería aumentar significativamente su gasto en defensa.",[2,0,2,-2,-2,-2,1,-2,0,-2,0,-2]],
+["España debe imponer un embargo total de armas a Israel y endurecer sus relaciones con ese gobierno.",[-2,1,-2,2,2,2,-1,2,1,2,N,2]],
+["Es positivo ampliar el papel de la gestión privada y concertada en sanidad y educación.",[2,-1,2,-2,-2,-1,1,-2,0,-2,1,-2]],
+["La ley de violencia de género debe mantenerse y reforzarse, sin sustituirla por una de violencia intrafamiliar.",[1,2,-2,2,2,2,1,2,2,2,1,2]],
+["El derecho al aborto debería protegerse expresamente en la Constitución.",[-1,2,-2,2,2,2,N,2,2,2,1,2]],
+["Gobierna la lista más votada, aunque no logre mayoría, modificando la ley electoral.",[1,-2,1,-2,-2,-2,-2,-2,-2,-2,-2,-2]],
+["Debería prohibirse el burka y el niqab en espacios públicos.",[1,-2,2,-2,-2,-1,1,-2,-1,-2,N,-2]],
+["Hay que endurecer las penas, incluida la prisión permanente revisable.",[2,-1,2,-2,-2,-2,1,-2,-1,-2,0,-2]],
+["España debería ser una república en lugar de una monarquía.",[-2,-1,-2,1,2,2,1,2,1,2,-1,1]],
+["Hay que facilitar el desalojo rápido de viviendas ocupadas ilegalmente.",[2,-1,2,-2,-2,-1,2,-2,0,-2,1,-2]]];
+const OPT=[["Muy en contra",-2],["En contra",-1],["Neutral",0],["A favor",1],["Muy a favor",2]];
+let S={step:-1,reg:"RES",abroad:false,ans:[],imp:[]};
+const $=h=>{document.getElementById("app").innerHTML=h;window.scrollTo(0,0)};
+function intro(){$(`<h1>¿Con quién estás más alineado? <span class="mut">Elecciones generales · 29 de noviembre de 2026</span></h1>
+<p>${Q.length} afirmaciones, unos 5 minutos. Al final ves tu afinidad con cada partido y en qué preguntas coincidís o discrepáis.</p>
+<div class="card warn"><b>Léelo antes de empezar.</b><p class="mut">A 19 de octubre ningún partido ha publicado su programa completo para el 29-N. Las posiciones se han estimado a partir de programas de 2023 y de propuestas anunciadas en la precampaña, y son una simplificación mía: revísalas con las fuentes oficiales. No predice tu voto útil ni cuántos escaños reparte tu circunscripción.</p></div>
+<div class="card"><label for="r"><b>¿Dónde votas?</b></label><select id="r" onchange="S.reg=this.value">${Object.entries(REG).map(([k,v])=>`<option value="${k}" ${k==S.reg?"selected":""}>${v}</option>`).join("")}</select>
+<label><input type="checkbox" id="ab" onchange="S.abroad=this.checked"> Vivo en el extranjero (elige arriba tu última provincia de residencia)</label>
+<p class="mut">Los partidos regionales solo aparecen en su territorio. Quien vive fuera vota por la provincia donde estuvo inscrito por última vez.</p></div>
+<button class="btn pri" onclick="S.step=0;q()">Empezar</button>`)}
+function q(){const i=S.step,[t]=Q[i],a=S.ans[i];$(`<div class="prog"><i style="width:${i/Q.length*100}%"></i></div><p class="mut">Pregunta ${i+1} de ${Q.length}</p><h2>${t}</h2>
+${OPT.map(([l,v])=>`<button class="btn ${a===v?"sel":""}" onclick="ans(${v})">${l}</button>`).join("")}
+<label><input type="checkbox" ${S.imp[i]?"checked":""} onchange="S.imp[${i}]=this.checked"> Es especialmente importante para mí</label>
+<div class="row"><button class="btn" style="width:auto" onclick="back()" ${i?"":"disabled"}>Atrás</button><button class="btn" style="width:auto" onclick="ans(undefined)">Saltar</button></div>`)}
+function ans(v){S.ans[S.step]=v;S.step++;S.step>=Q.length?res():q()}
+function back(){S.step--;q()}
+function vis(j){const id=P[j][0];return !PR[id]||PR[id].includes(S.reg)}
+function res(){const out=[];
+P.forEach((p,j)=>{if(!vis(j))return;let num=0,den=0,tot=0,det=[];
+Q.forEach(([t,pos],i)=>{const a=S.ans[i];if(a===undefined)return;const w=S.imp[i]?2:1;tot+=w;const x=pos[j];if(x===N)return;den+=w;num+=w*Math.abs(a-x)/4;det.push([t,a,x])});
+out.push({p,j,sc:den?100*(1-num/den):0,cov:tot?den/tot:0,det,den})});
+out.sort((a,b)=>b.sc-a.sc);const L=["Muy en contra","En contra","Neutral","A favor","Muy a favor"];
+const n=S.ans.filter(v=>v!==undefined).length;
+$(`<h1>Tu afinidad</h1><p class="mut">Basado en ${n} respuestas${S.abroad?" · voto exterior (CERA/ERTA)":""} · ${REG[S.reg]}</p>
+${n<10?'<div class="card warn">Con tan pocas respuestas el resultado es poco fiable.</div>':""}
+${out.map((o,k)=>`<div class="card"><div class="row"><b>${k+1}. ${o.p[1]}</b><b>${Math.round(o.sc)}%</b></div>
+<div class="bar"><i style="width:${o.sc}%;background:${o.p[2]}"></i></div>
+${o.cov<0.8?`<p class="mut">Posición conocida solo en ${Math.round(o.cov*100)}% de tus respuestas.</p>`:""}
+<details><summary class="mut">Ver detalle por pregunta</summary><div class="tbl"><table><tr><th>Afirmación</th><th>Tú</th><th>Partido</th></tr>${o.det.map(d=>`<tr><td>${d[0]}</td><td>${L[d[1]+2]}</td><td style="color:${Math.abs(d[1]-d[2])<=1?"var(--ok)":"var(--ac)"}">${L[d[2]+2]}</td></tr>`).join("")}</table></div></details></div>`).join("")}
+${NOTE[S.reg]?`<div class="card mut">${NOTE[S.reg]}</div>`:""}
+<div class="card mut"><b>Cómo se calcula.</b> La afinidad es 100 menos la distancia media entre tu respuesta y la posición estimada del partido (las preguntas marcadas como importantes pesan el doble; se ignoran las que el partido no ha concretado). También presentan candidaturas otros partidos que no se modelan aquí (por ejemplo UPN, Se Acabó La Fiesta o Adelante Andalucía).</div>
+<div class="card mut"><b>Votar desde el extranjero.</b> Quien está en el CERA ya no necesita solicitar el voto: puede depositarlo en el consulado del 21 al 26 de noviembre. Quien reside en España y está temporalmente fuera (ERTA) debe solicitarlo en el consulado antes del 31 de octubre. Quien está en España puede pedir el voto por correo hasta el 19 de noviembre. Fuente: <a href="https://www.exteriores.gob.es">exteriores.gob.es</a>.</div>
+<button class="btn pri" onclick="S={step:-1,reg:S.reg,abroad:S.abroad,ans:[],imp:[]};intro()">Repetir el test</button>`)}
+intro();
+</script></body></html>
